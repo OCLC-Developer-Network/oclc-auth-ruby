@@ -43,7 +43,7 @@ puts response.body
 
 ### Example: Sinatra classic-style app protected by an OAuth 2 Explicit Authorization login
 
-In this simple Sinatra [http://www.sinatrarb.com/] web application application, the /admin path 
+In this simple [Sinatra](http://www.sinatrarb.com/) web application application, the /admin path 
 is protected by an OAuth 2 Explicit Authoirzation login. Run the app with:
 
 ```bash
@@ -52,11 +52,11 @@ $ ruby webapp.rb
 
 And then point your web browser at the unauthenticated URL:
 
-http://localhost:4567
+[http://localhost:4567](http://localhost:4567)
 
 and the authenticated URL:
 
-http://localhost:4567/admin
+[http://localhost:4567/admin](http://localhost:4567/admin)
 
 to see the application behavior.
 
