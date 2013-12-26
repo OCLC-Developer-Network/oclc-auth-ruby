@@ -102,7 +102,7 @@ module OCLC
   #   get '/catch_auth_code' do
   #     if params and params[:code]
   #       wskey = settings.wskey
-  #       session[:token] = wskey.auth_code_token(params[:code], 91475, 91475)
+  #       session[:token] = wskey.auth_code_token(params[:code], 128807, 128807)
   #       redirect '/admin'
   #     else
   #       "This view will only render if there is an error in the login flow. " + 
@@ -123,7 +123,7 @@ module OCLC
   #   def authenticate
   #     if session[:token].nil? or session[:token].expired?
   #       wskey = settings.wskey
-  #       login_url = wskey.login_url(91475, 91475)
+  #       login_url = wskey.login_url(128807, 128807)
   #       redirect login_url
   #     end
   #   end    
