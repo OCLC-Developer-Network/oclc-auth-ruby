@@ -43,7 +43,7 @@ puts response.body
 
 ### Example: Sinatra classic-style app protected by an OAuth 2 Explicit Authorization login
 
-In this simple Sinatra[http://www.sinatrarb.com/] web application application, the /admin path 
+In this simple Sinatra [http://www.sinatrarb.com/] web application application, the /admin path 
 is protected by an OAuth 2 Explicit Authoirzation login. Run the app with:
 
 ```bash
