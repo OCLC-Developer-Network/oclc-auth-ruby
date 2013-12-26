@@ -1,29 +1,42 @@
-# Oclc::Auth
+# OCLC::Auth
 
-TODO: Write a gem description
+This gem is a ruby wrapper around the Web Service Authentication system used by OCLC web services. 
 
 ## Installation
 
-Add this line to your application's Gemfile:
-
-    gem 'oclc-auth'
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install oclc-auth
+```bash
+$ git clone https://github.com/OCLC-Developer-Network/oclc-auth-ruby.git
+$ cd oclc-auth-ruby
+$ gem build oclc-auth.gemspec
+$ gem install oclc-auth-<VERSION-NUMBER>.gem
+```
 
 ## Usage
 
-TODO: Write usage instructions here
+### Example: Read bib from WorldCat Metadata API
 
-## Contributing
+This example reads a bibliographic record from the WorldCat Metadata API using the WSKey class to generate 
+an HMAC signature for the authorization header.
 
-1. Fork it
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
+```ruby
+#!/usr/bin/env ruby
+
+require 'net/http'
+require 'oclc/auth'
+
+wskey = OCLC::Auth::WSKey.new('api-key', 'api-key-secret')
+
+url = 'https://worldcat.org/bib/data/823520553?classificationScheme=LibraryOfCongress&holdingLibraryCode=MAIN'
+uri = URI.parse(url)
+
+request = Net::HTTP::Get.new(uri.request_uri)
+request['Authorization'] = wskey.hmac_signature('GET', url, :principal_id => 'principal-ID', :principal_idns => 'principal-IDNS')
+
+http = Net::HTTP.new(uri.host, uri.port)
+http.use_ssl = true
+response = http.start do |http| 
+  http.request(request)
+end
+
+puts response.body
+```
