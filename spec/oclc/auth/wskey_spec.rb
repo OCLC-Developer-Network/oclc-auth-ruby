@@ -45,9 +45,16 @@ describe OCLC::Auth::WSKey do
 
     it "should produce the correct signature when principal info is required and not already included in the URL" do
       url = 'https://worldcat.org/bib/data/823520553?classificationScheme=LibraryOfCongress&holdingLibraryCode=MAIN'
-      signature = @wskey.hmac_signature('GET', url, :principal_id => '201571dd-b197-42e1-bd36-9fea404a864d', :principal_idns => 'urn:oclc:wms:da')
+      signature = @wskey.hmac_signature('GET', url, :principal_id => '201571dd-b197-42e1-bd36-9fea404a864z', :principal_idns => 'urn:oclc:wms:da')
       signature.should == 'http://www.worldcat.org/wskey/v2/hmac/v1 clientId="api-key", timestamp="1386264196", nonce="as7shfn3", ' + 
-          'signature="1IHjKiIqrvg6bw/OJ6LzxMSrQDuaY+F0qMioo09fBII=", principalID="201571dd-b197-42e1-bd36-9fea404a864d", principalIDNS="urn:oclc:wms:da"'
+          'signature="1IHjKiIqrvg6bw/OJ6LzxMSrQDuaY+F0qMioo09fBII=", principalID="201571dd-b197-42e1-bd36-9fea404a864z", principalIDNS="urn:oclc:wms:da"'
+    end
+    
+    it "should add the principal info to the signature when there are no URL query parameters" do
+      url = 'https://128807.share.worldcat.org/ncip/circ-patron'
+      signature = @wskey.hmac_signature('GET', url, :principal_id => '201571dd-b197-42e1-bd36-9fea404a864z', :principal_idns => 'urn:oclc:wms:da')
+      signature.should == 'http://www.worldcat.org/wskey/v2/hmac/v1 clientId="api-key", timestamp="1386264196", nonce="as7shfn3", ' + 
+          'signature="zzKvqg051OgLuTcE8HqPUjF1TaHyBk+iUnfBr9xMngY=", principalID="201571dd-b197-42e1-bd36-9fea404a864z", principalIDNS="urn:oclc:wms:da"'
     end
   end
   
@@ -99,7 +106,7 @@ describe OCLC::Auth::WSKey do
         stub_request(:post, url).to_return(
             :body => File.new("#{File.expand_path(File.dirname(__FILE__))}/../../support/responses/token.json"),
             :status => 200)
-
+      
         token = @wskey.auth_code_token('the_code', 128807, 91475)
         token.class.should == OCLC::Auth::AccessToken
       end

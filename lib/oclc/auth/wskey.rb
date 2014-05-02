@@ -121,13 +121,13 @@ module OCLC
         auth += "signature=\"#{signature(signature_base)}\""
         
         if options[:principal_id] and options[:principal_idns] 
+          append = true
           uri = URI.parse(url)
           if uri.query
             params = CGI::parse(uri.query)
-            unless params.has_key?("principalID")
-              auth += ", principalID=\"#{options[:principal_id]}\", principalIDNS=\"#{options[:principal_idns]}\""
-            end
+            append = params.has_key?("principalID") ? false : true
           end
+          auth += ", principalID=\"#{options[:principal_id]}\", principalIDNS=\"#{options[:principal_idns]}\"" if append
         end
         auth
       end
