@@ -164,9 +164,11 @@ module OCLC
         uri = URI.parse(url)
         if uri.query
           params = CGI::parse(uri.query)
-          params.each do |key,value|
-            value = CGI.unescape(value[0])
-            escaped_params << key + "=" + CGI.escape(value).gsub('+', '%20')
+          params.each do |key,values|
+            values.each do |value|
+              value = CGI.unescape(value)
+              escaped_params << key + "=" + CGI.escape(value).gsub('+', '%20')
+            end
           end
         end
       

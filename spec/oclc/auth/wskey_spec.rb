@@ -56,6 +56,13 @@ describe OCLC::Auth::WSKey do
       signature.should == 'http://www.worldcat.org/wskey/v2/hmac/v1 clientId="api-key", timestamp="1386264196", nonce="as7shfn3", ' + 
           'signature="zzKvqg051OgLuTcE8HqPUjF1TaHyBk+iUnfBr9xMngY=", principalID="201571dd-b197-42e1-bd36-9fea404a864z", principalIDNS="urn:oclc:wms:da"'
     end
+    
+    it "should handle a URL with multiples instances of the same parameter" do
+      url = "https://beta.worldcat.org/discovery/bib/search?q=wittgenstein+reader&facets=author%3A10&facets=inLanguage%3A10"
+      signature = @wskey.hmac_signature('GET', url)
+      signature.should == 'http://www.worldcat.org/wskey/v2/hmac/v1 clientId="api-key", timestamp="1386264196", nonce="as7shfn3", ' + 
+          'signature="VoG1j6XSPPbwUbUiFY8eCx2/7JyqGWGTtZDwA+y7A4w="'
+    end
   end
   
   
