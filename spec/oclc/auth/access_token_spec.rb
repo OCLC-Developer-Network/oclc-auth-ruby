@@ -57,6 +57,16 @@ describe OCLC::Auth::AccessToken do
     @token.expires_at.should == expected
   end
   
+  it "should throw an exception if the wskey is not authorized for the institution" do
+    stub_request(:post, @token.request_url).to_return(
+        :body => File.new("#{File.expand_path(File.dirname(__FILE__))}/../../support/responses/errorToken.json"),
+        :status => 403)
+              
+    wskey = OCLC::Auth::WSKey.new('api-key', 'api-key-secret')
+  lambda {@token.create!(wskey)}.should raise_error(OCLC::Auth::Exception)
+  lambda {@token.create!(wskey)}.should raise_error(OCLC::Auth::Exception, 'unauthorized_client')
+  end
+  
   it "should report the token is expired" do
     @token.expired?().should == true
   end
