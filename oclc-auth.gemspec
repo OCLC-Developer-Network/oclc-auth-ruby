@@ -27,6 +27,7 @@ Gem::Specification.new do |gem|
   
   gem.add_dependency 'json', '~> 1.8', '>= 1.8.1'
   gem.add_dependency 'rest-client', '~> 1.6', '>= 1.6.7'
+  gem.add_dependency 'rake', '~> 10.4'
   
   gem.add_development_dependency 'rspec', '~> 2.14', '>= 2.14.1'
   gem.add_development_dependency 'simplecov', '~> 0.8', '>= 0.8.2'
