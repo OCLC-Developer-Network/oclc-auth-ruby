@@ -6,6 +6,8 @@ before_install:
 
 rvm:
   - 2.2
+  - 2.3
+  - 2.4
   - jruby
 
 # configure notifications (email, IRC, campfire etc)
