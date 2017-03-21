@@ -15,38 +15,44 @@
 require_relative '../../spec_helper'
 
 describe OCLC::Auth::AuthCode do
-  before(:all) do
-    @auth_code = OCLC::Auth::AuthCode.new('api-key', 128807, 91475, 'http://localhost:4567/catch_auth_code', 'WMS_Availability')
+  context "when testing a specific institution" do
+    before(:all) do
+      @auth_code = OCLC::Auth::AuthCode.new('api-key', 'http://localhost:4567/catch_auth_code', 'WMS_Availability', :authenticating_institution_id => 128807, :context_institution_id => 91475)
+    end
+    
+    it "should construct an auth code with the right fields" do
+      @auth_code.client_id.should == 'api-key'
+      @auth_code.authenticating_institution_id.should == 128807
+      @auth_code.context_institution_id.should == 91475
+      @auth_code.redirect_uri.should == 'http://localhost:4567/catch_auth_code'
+      @auth_code.scope.should == 'WMS_Availability'
+    end
+    
+    it "should have the correct production URL configured" do
+      OCLC::Auth::AuthCode.production_url.should == 'https://authn.sd00.worldcat.org/oauth2/authorizeCode'
+    end
+    
+    it "should produce the correct login URL" do
+      uri = URI.parse(@auth_code.login_url)
+      uri.hostname.should == 'authn.sd00.worldcat.org'
+      uri.path.should == '/oauth2/authorizeCode'
+      params = CGI.parse(uri.query)
+      params["client_id"].should == ["api-key"]
+      params["authenticatingInstitutionId"].should == ["128807"]
+      params["contextInstitutionId"].should == ["91475"]
+      params["redirect_uri"].should == ["http://localhost:4567/catch_auth_code"]
+      params["response_type"].should == ["code"]
+      params["scope"].should == ["WMS_Availability"]
+    end
+    
+    it "should enable override of the auth server URL" do
+      @auth_code.auth_server_url = 'https://localhost/oauth2/authorizeCode'
+      uri = URI.parse(@auth_code.login_url)
+      uri.hostname.should == 'localhost'
+    end
   end
   
-  it "should construct an auth code with the right fields" do
-    @auth_code.client_id.should == 'api-key'
-    @auth_code.authenticating_institution_id.should == 128807
-    @auth_code.context_institution_id.should == 91475
-    @auth_code.redirect_uri.should == 'http://localhost:4567/catch_auth_code'
-    @auth_code.scope.should == 'WMS_Availability'
-  end
-  
-  it "should have the correct production URL configured" do
-    OCLC::Auth::AuthCode.production_url.should == 'https://authn.sd00.worldcat.org/oauth2/authorizeCode'
-  end
-  
-  it "should produce the correct login URL" do
-    uri = URI.parse(@auth_code.login_url)
-    uri.hostname.should == 'authn.sd00.worldcat.org'
-    uri.path.should == '/oauth2/authorizeCode'
-    params = CGI.parse(uri.query)
-    params["client_id"].should == ["api-key"]
-    params["authenticatingInstitutionId"].should == ["128807"]
-    params["contextInstitutionId"].should == ["91475"]
-    params["redirect_uri"].should == ["http://localhost:4567/catch_auth_code"]
-    params["response_type"].should == ["code"]
-    params["scope"].should == ["WMS_Availability"]
-  end
-  
-  it "should enable override of the auth server URL" do
-    @auth_code.auth_server_url = 'https://localhost/oauth2/authorizeCode'
-    uri = URI.parse(@auth_code.login_url)
-    uri.hostname.should == 'localhost'
+  context "when testing with no institution" do
+    
   end
 end
