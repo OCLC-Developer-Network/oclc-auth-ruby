@@ -59,13 +59,24 @@ module OCLC
       
       # Returns the login URL used with OCLC's OAuth 2 implementation of the  Explicit Authorization Flow.
       #
+      # Options
+      # 
+      # [:authenticating_institution_id] the WorldCat Registry ID of the institution that will login the user
+      # [:context_institution_id] the WorldCat Registry ID of the institution whose data will be accessed
+      #      
       # See {Explicit Auth Documentation}[http://www.oclc.org/developer/platform/explicit-authorization-code] on the 
       # OCLC Developer Network.
-      def login_url(authenticating_institution_id, context_institution_id)
+      def login_url(authenticating_institution_id = nil, context_institution_id = nil)
         if services == nil or services.size == 0
           raise OCLC::Auth::Exception, "No service specified. You must construct a WSKey with one or more services to request an auth code" 
         end
-        auth_code = OCLC::Auth::AuthCode.new(@key, authenticating_institution_id, context_institution_id, @redirect_uri, services.join(' '))
+        
+        if authenticating_institution_id and context_institution_id
+          auth_code = OCLC::Auth::AuthCode.new(@key, @redirect_uri, services.join(' '), :authenticating_institution_id => authenticating_institution_id, :context_institution_id => context_institution_id)
+        else
+          auth_code = OCLC::Auth::AuthCode.new(@key, @redirect_uri, services.join(' '))
+        end
+        
         if @auth_server_url
           auth_code.auth_server_url = @auth_server_url + '/authorizeCode'
         end

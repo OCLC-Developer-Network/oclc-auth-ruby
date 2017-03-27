@@ -96,7 +96,7 @@ describe OCLC::Auth::WSKey do
 
       it "should throw an exception if the services are empty" do
         wskey = OCLC::Auth::WSKey.new('api-key', 'api-key-secret', :redirect_uri => 'http://localhost:4567/catch_auth_code', :services => [])
-        lambda { wskey.login_url(128807, 91475) }.should raise_error(OCLC::Auth::Exception)
+        lambda { wskey.login_url(:authenticating_institution_id => 128807, :context_institution_id => 91475) }.should raise_error(OCLC::Auth::Exception)
       end
 
       it "should throw an exception if the services are absent" do
@@ -104,6 +104,23 @@ describe OCLC::Auth::WSKey do
         lambda { wskey.login_url(128807, 91475) }.should raise_error(OCLC::Auth::Exception)
       end
     end
+    
+    context "when obtaining an authorization code and no institution is passed" do
+      it "should produce the correct login URL" do
+        expected_url = 'https://authn.sd00.worldcat.org/oauth2/authorizeCode?client_id=api-key&' + 
+            'redirect_uri=http%3A%2F%2Flocalhost%3A4567%2Fcatch_auth_code&response_type=code&scope=WMS_Availability+WMS_NCIP'
+        expected_uri = URI.parse(expected_url)
+
+        actual_url = @wskey.login_url()
+        actual_uri = URI.parse(actual_url)
+
+        actual_uri.hostname.should == expected_uri.hostname
+        actual_uri.path.should == expected_uri.path
+        expected_params = CGI.parse(expected_uri.query)
+        actual_params = CGI.parse(actual_uri.query)
+        expected_params.should == actual_params
+      end
+    end    
 
     context "when redeeming an authorization code for an access token" do
       it "should return an object with the class OCLC::Auth::AccessToken" do
