@@ -96,7 +96,7 @@ describe OCLC::Auth::WSKey do
 
       it "should throw an exception if the services are empty" do
         wskey = OCLC::Auth::WSKey.new('api-key', 'api-key-secret', :redirect_uri => 'http://localhost:4567/catch_auth_code', :services => [])
-        lambda { wskey.login_url(128807, 91475) }.should raise_error(OCLC::Auth::Exception)
+        lambda { wskey.login_url(:authenticating_institution_id => 128807, :context_institution_id => 91475) }.should raise_error(OCLC::Auth::Exception)
       end
 
       it "should throw an exception if the services are absent" do
