@@ -41,6 +41,37 @@ end
 puts response.body
 ```
 
+### Example: Read bib from WorldCat Metadata API - Access Token via Client Credential Grant
+
+This example reads a bibliographic record from the WorldCat Metadata API using the WSKey class to generate 
+an HMAC signature for the authorization header.
+
+```ruby
+#!/usr/bin/env ruby
+
+require 'net/http'
+require 'oclc/auth'
+
+services = ['WMS_Availability']
+wskey = OCLC::Auth::WSKey.new(key, secret, :redirect_uri => redirect_uri, :services => services)
+
+url = 'https://worldcat.org/bib/data/823520553?classificationScheme=LibraryOfCongress&holdingLibraryCode=MAIN'
+uri = URI.parse(url)
+
+accessToken = wskey.client_credentials_token(128807, 128807, :principal_id => 'principal-ID', :principal_idns => 'principal-IDNS')
+
+request = Net::HTTP::Get.new(uri.request_uri)
+request['Authorization'] = 'Bearer ' + accessToken
+
+http = Net::HTTP.new(uri.host, uri.port)
+http.use_ssl = true
+response = http.start do |http| 
+  http.request(request)
+end
+
+puts response.body
+```
+
 ### Example: Sinatra classic-style app protected by an OAuth 2 Explicit Authorization login
 
 In this simple [Sinatra](http://www.sinatrarb.com/) web application application, the /admin path 
